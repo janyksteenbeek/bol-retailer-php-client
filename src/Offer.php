@@ -4,6 +4,7 @@ namespace Picqer\BolRetailer;
 use GuzzleHttp\Exception\ClientException;
 use Picqer\BolRetailer\Exception\HttpException;
 use Picqer\BolRetailer\Exception\OfferNotFoundException;
+use Picqer\BolRetailer\Model\Pricing;
 
 class Offer extends Model\Offer
 {
@@ -102,6 +103,20 @@ class Offer extends Model\Offer
         }
 
         return new ProcessStatus(json_decode((string) $response->getBody(), true));
+    }
+
+    public function updatePricing(Pricing $pricing): Pricing
+    {
+        $id       = $this->offerId;
+        $content  = json_encode([ 'pricing' => ['bundlePrices' => $pricing] ]);
+
+        try {
+            $response = Client::request('PUT', "offers/${id}/price", ['body' => $content]);
+        } catch (ClientException $e) {
+            static::handleException($e);
+        }
+
+        return new Pricing(json_decode((string) $response->getBody(), true));
     }
 
     /**
