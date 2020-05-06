@@ -105,7 +105,7 @@ class Offer extends Model\Offer
         return new ProcessStatus(json_decode((string) $response->getBody(), true));
     }
 
-    public function updatePricing(Pricing $pricing): Pricing
+    public function updatePricing(Pricing $pricing): ProcessStatus
     {
         $id       = $this->offerId;
         $content  = json_encode([ 'pricing' => ['bundlePrices' => $pricing] ]);
@@ -116,7 +116,7 @@ class Offer extends Model\Offer
             static::handleException($e);
         }
 
-        return new Pricing(json_decode((string) $response->getBody(), true));
+        return new ProcessStatus(json_decode((string) $response->getBody(), true));
     }
 
     /**
