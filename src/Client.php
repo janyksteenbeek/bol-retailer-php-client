@@ -156,10 +156,10 @@ class Client
     }
 
     /**
-     * @return mixed
+     * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function fetchToken(): mixed
+    public static function fetchToken(): array
     {
         $params  = ['client_id' => self::$clientId, 'client_secret' => self::$clientSecret, 'grant_type' => 'client_credentials'];
 
