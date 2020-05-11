@@ -13,29 +13,34 @@ class Client
     /** @var array|null */
     private static $token = null;
 
+    /** @var string */
+    private static $clientId;
+
+    /** @var string */
+    private static $clientSecret;
+
     /** @var bool */
     private static $isDemoMode = false;
 
     /**
      * Set the API credentials of the client.
      *
-     * @param string $clientId     The client ID to use for authentication.
+     * @param string $clientId The client ID to use for authentication.
      * @param string $clientSecret The client secret to use for authentication.
+     * @param string|null $token An existing authorization token.
+     *
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function setCredentials(string $clientId, string $clientSecret): void
+    public static function setCredentials(string $clientId, string $clientSecret, string $token = null): void
     {
-        $params  = [ 'client_id' => $clientId, 'client_secret' => $clientSecret, 'grant_type' => 'client_credentials' ];
-        $headers = [ 'Accept' => 'application/json' ];
-
-        $response = static::getHttp()->request('POST', 'https://login.bol.com/token', [
-            'headers'     => $headers,
-            'form_params' => $params
-        ]);
-
-        $token               = json_decode((string) $response->getBody(), true);
-        $token['expires_at'] = time() + $token['expires_in'] ?? 0;
+        self::$clientId = $clientId;
+        self::$clientSecret = $clientSecret;
 
         static::$token = $token;
+
+        if (! self::isAuthenticated()) {
+            static::$token = self::fetchToken();
+        }
     }
 
     /**
@@ -101,6 +106,10 @@ class Client
         static::$http = $http;
     }
 
+    /**
+     * @param array $options
+     * @return array
+     */
     private static function addAuthenticationOptions(array $options): array
     {
         if (!static::isAuthenticated() || !is_array(static::$token)) {
@@ -116,6 +125,9 @@ class Client
         return $options;
     }
 
+    /**
+     * @return HttpInterface
+     */
     private static function getHttp(): HttpInterface
     {
         if (!static::$http instanceof HttpInterface) {
@@ -131,5 +143,36 @@ class Client
         }
 
         return static::$http;
+    }
+
+    /**
+     * Get authorization token.
+     *
+     * @return array|null
+     */
+    public static function getToken(): ?array
+    {
+        return self::$token;
+    }
+
+    /**
+     * @return mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function fetchToken(): mixed
+    {
+        $params  = ['client_id' => self::$clientId, 'client_secret' => self::$clientSecret, 'grant_type' => 'client_credentials'];
+
+        $headers = [ 'Accept' => 'application/json' ];
+
+        $response = static::getHttp()->request('POST', 'https://login.bol.com/token', [
+            'headers' => $headers,
+            'form_params' => $params
+        ]);
+
+        $token = json_decode((string)$response->getBody(), true);
+        $token['expires_at'] = time() + $token['expires_in'] ?? 0;
+
+        return $token;
     }
 }
