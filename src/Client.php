@@ -27,11 +27,11 @@ class Client
      *
      * @param string $clientId The client ID to use for authentication.
      * @param string $clientSecret The client secret to use for authentication.
-     * @param string|null $token An existing authorization token.
+     * @param array|null $token An existing authorization token.
      *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public static function setCredentials(string $clientId, string $clientSecret, string $token = null): void
+    public static function setCredentials(string $clientId, string $clientSecret, array $token = null): void
     {
         self::$clientId = $clientId;
         self::$clientSecret = $clientSecret;
