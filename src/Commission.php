@@ -38,7 +38,7 @@ class Commission extends Model\Commission
     {
         $response = $e->getResponse();
 
-        if ($response && $response->getStatusCode() === 404) {
+        if ($response && $response->getStatusCode() === 400) {
             throw new CommissionNotFoundException(
                 json_decode((string) $response->getBody(), true),
                 404,
