@@ -8,19 +8,19 @@ use Psr\Http\Message\ResponseInterface;
 class Client
 {
     /** @var HttpInterface|null */
-    private static $http;
+    protected static $http;
 
     /** @var array|null */
-    private static $token = null;
+    protected static $token = null;
 
     /** @var string */
-    private static $clientId;
+    protected static $clientId;
 
     /** @var string */
-    private static $clientSecret;
+    protected static $clientSecret;
 
     /** @var bool */
-    private static $isDemoMode = false;
+    protected static $isDemoMode = false;
 
     /**
      * Set the API credentials of the client.
