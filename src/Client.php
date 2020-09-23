@@ -110,7 +110,7 @@ class Client
      * @param array $options
      * @return array
      */
-    private static function addAuthenticationOptions(array $options): array
+    protected static function addAuthenticationOptions(array $options): array
     {
         if (!static::isAuthenticated() || !is_array(static::$token)) {
             return $options;
@@ -128,7 +128,7 @@ class Client
     /**
      * @return HttpInterface
      */
-    private static function getHttp(): HttpInterface
+    protected static function getHttp(): HttpInterface
     {
         if (!static::$http instanceof HttpInterface) {
             $baseUri = static::$isDemoMode ? 'https://api.bol.com/retailer-demo/' : 'https://api.bol.com/retailer/';
